@@ -146,6 +146,18 @@ module ethernet_coupler(){
         }
 }
 
+vga_coupler_width=34;
+vga_coupler_height=14;
+vga_coupler_depth=20;
+module vga_coupler(){
+    //just an example for now from http://www.datapro.net/products/vga-panel-mounting-coupler.html
+    color("red")
+        cube([vga_coupler_width,vga_coupler_height,vga_coupler_depth]);
+    translate([vga_coupler_width/2, vga_coupler_height/2, vga_coupler_depth])
+        color("yellow") {
+            text(halign="center", valign="center", size=5, text="VGA");
+        }
+}
 
 //Let's build the case
 translate([-case_width/2, -case_depth/2, 0]) {
@@ -165,6 +177,8 @@ translate([-case_width/2, -case_depth/2, 0]) {
     % translate([case_width-acrylic,acrylic,acrylic])
         rotate([90,0,90])
             side_panel();
+    
+    //Parts inside the case
     translate([case_width-psu_width-acrylic,case_depth-psu_depth-acrylic,acrylic])
         psu();
     translate([325,acrylic+10,0])
@@ -191,4 +205,7 @@ translate([-case_width/2, -case_depth/2, 0]) {
         ethernet_coupler();
     translate([case_width- acrylic - 3*(ethernet_coupler_width+5),-4,acrylic+(front_panel_height-ethernet_coupler_height)/2])
         ethernet_coupler();
+    translate([acrylic + 10,-4,acrylic+(front_panel_height-vga_coupler_height)/2])
+        vga_coupler();
+    
 }
