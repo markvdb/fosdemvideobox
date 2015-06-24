@@ -11,7 +11,8 @@ module front_panel(){
 }
 
 module back_panel(){
-    cube([case_width,case_height,acrylic]);
+    back_panel_height=front_panel_height;
+    cube([case_width,back_panel_height,acrylic]);
 }
 
 module top_panel(){
@@ -23,7 +24,7 @@ module bottom_panel(){
 }
 
 module side_panel(){
-    cube([case_depth,case_height,acrylic]); 
+    cube([case_depth-2*acrylic,case_height-2*acrylic,acrylic]); 
 }
 
 // Parts inside the case
@@ -127,7 +128,7 @@ module banana_pi_lcd(){
         cube([lcd_width,lcd_height,lcd_depth]); //non-touch
     translate([lcd_width/2, lcd_height/2, lcd_depth])
         color("yellow") {
-            text(halign="center", valign="center", text="H264 Enc.");
+            text(halign="center", valign="center", text="LCD");
         }
 
 }
@@ -141,19 +142,31 @@ module ethernet_coupler(){
         cube([ethernet_coupler_width,ethernet_coupler_height,ethernet_coupler_depth]);
     translate([ethernet_coupler_width/2, ethernet_coupler_height/2, ethernet_coupler_depth])
         color("yellow") {
-            text(halign="center", valign="center", size=5, text="8P8C");
+            text(halign="center", valign="center", size=5, text="RJ45");
         }
 }
 
+
+//Let's build the case
 translate([-case_width/2, -case_depth/2, 0]) {
+    //Panels
     bottom_panel();
     % translate([0,0,case_height-acrylic])
         top_panel();
-    translate([case_width-psu_width-acrylic,case_depth-psu_depth-acrylic,acrylic])
-        psu();
     % translate([0,acrylic,acrylic])
         rotate([90,0,0])
             front_panel();
+    % translate([0,case_depth,acrylic])
+        rotate([90,0,0])
+            back_panel();
+    % translate([0,acrylic,acrylic])
+        rotate([90,0,90])
+            side_panel();
+    % translate([case_width-acrylic,acrylic,acrylic])
+        rotate([90,0,90])
+            side_panel();
+    translate([case_width-psu_width-acrylic,case_depth-psu_depth-acrylic,acrylic])
+        psu();
     translate([325,acrylic+10,0])
         rotate([0,0,90])
             translate([0,0,acrylic])
