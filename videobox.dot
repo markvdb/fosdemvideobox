@@ -1,0 +1,72 @@
+digraph G {
+	concentrate=true;
+	node [shape=box];
+	speaker_laptop [label="speaker laptop"];
+	camera_with_audio_gear [label="camera with audio gear"];
+	inet [label="fosdem network"];
+
+	subgraph cluster_speaker {
+		style=filled;
+		color=lightgrey;
+		node [style=filled];
+		//parts
+		cluster_speaker_vga_splitter [label="vga splitter\n5v 500mA", URL="http://www.lindy.co.uk/audio-video-c2/splitters-c159/vga-c160/2-port-vga-splitter-150mhz-p6701"];
+		cluster_speaker_vgahdmi [label="vga-> hdmi scaler\n5v 1A", URL="http://www.lenkeng.com/china/showproduct.asp?id=153"];
+		cluster_speaker_h264 [label="h264 encoder\n12v 840mA", URL="https://www.blackmagicdesign.com/products/h264prorecorder/techspecs/"];
+		cluster_speaker_bpi [label="banana pi\n5v max 500mA", URL="http://www.bananapi.org/p/product.html"];
+		cluster_speaker_switch [label="5 port ethernet switch\n5v 1A" URL="http://us.dlink.com/wp-content/uploads/2014/03/GO-SW-8G_REVC_DATASHEET_1.00_EN.pdf"];
+		cluster_speaker_switch_1 [label="ethernet coupler 1\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_speaker_switch_2 [label="ethernet coupler 2\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_speaker_switch_3 [label="ethernet coupler 3\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_speaker_storage [label="storage\n>=32Gb ssd\n5v max 600mA"];
+		cluster_speaker_monitoring_panel [label="3.5 in lcd panel\n5v 250mA", URL="http://embeddedcomputer.nl/banana-pi-14/banana-pi-3-5-lcd-screen.html"];
+		cluster_psu [label="micro atx psu", URL="http://www.lc-power.com/produkte/netzteile/micro-atx/lc380m-v22"];
+		//internal cabling
+		cluster_speaker_vgahdmi -> cluster_speaker_h264 [label="hdmi"];
+		cluster_speaker_h264 -> cluster_speaker_bpi [label="usb"];
+		cluster_speaker_bpi -> cluster_speaker_switch [label="ethernet"];
+		cluster_speaker_bpi -> cluster_speaker_storage [label="sata"];
+		cluster_speaker_bpi -> cluster_speaker_monitoring_panel [label="fpc cable"];
+		cluster_speaker_switch -> cluster_speaker_switch_1 [label="ethernet"];
+		cluster_speaker_switch -> cluster_speaker_switch_2 [label="ethernet"];
+		cluster_speaker_switch -> cluster_speaker_switch_3 [label="ethernet"];
+		label = "SPEAKER LAPTOP ENCODER";
+	}
+
+	subgraph cluster_camera {
+		style=filled;
+		color=lightgrey;
+		node [style=filled];
+		//parts
+		cluster_camera_h264 [label="h264 encoder\n12v", URL="https://www.blackmagicdesign.com/products/h264prorecorder/techspecs/"];
+		cluster_camera_bpi [label="banana pi\n5v", URL="http://www.bananapi.org/p/product.html"];
+		cluster_camera_switch [label="5 port ethernet switch\n5v", URL="http://us.dlink.com/wp-content/uploads/2014/03/GO-SW-8G_REVC_DATASHEET_1.00_EN.pdf"];
+		cluster_camera_switch_1 [label="ethernet coupler 1\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_camera_switch_2 [label="ethernet coupler 2\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_camera_switch_3 [label="ethernet coupler 3\n(panel mount)", URL="http://www.alibaba.com/product-detail/Panel-mount-Screw-lock-Cat5e-Coupler_1799594993.html"];
+		cluster_camera_storage [label="storage\n>=32Gb ssd\n5v\nseparate power from bpi!"];
+		cluster_camera_monitoring_panel [label="3.5 in lcd panel\n5v 250mA", URL="http://embeddedcomputer.nl/banana-pi-14/banana-pi-3-5-lcd-screen.html"];
+		cluster_camera_psu [label="micro atx psu", URL="http://www.lc-power.com/produkte/netzteile/micro-atx/lc380m-v22"];
+		//internal cabling
+		cluster_camera_h264 -> cluster_camera_bpi [label="usb"];
+		cluster_camera_bpi -> cluster_camera_switch [label="ethernet"];
+		cluster_camera_bpi -> cluster_camera_storage [label="sata"];
+		cluster_camera_bpi -> cluster_camera_monitoring_panel [label="fpc cable"];
+		cluster_camera_switch -> cluster_camera_switch_1 [label="ethernet"];
+		cluster_camera_switch -> cluster_camera_switch_2 [label="ethernet"];
+		cluster_camera_switch -> cluster_camera_switch_3 [label="ethernet"];
+		label = "CAMERA ENCODER";
+	}
+
+	camera_with_audio_gear -> cluster_camera_h264 [label = "sdi", headlabel="encoder: sdi in"];
+	camera_with_audio_gear -> cluster_camera_h264 [label = "hdmi", headlabel="encoder: hdmi in"];
+	cluster_camera_switch_1 -> cluster_speaker_switch_1 [dir="both", label="ethernet"];
+	cluster_camera_switch_2 -> laptop [label= "ethernet\nmonitoring only"];
+        cluster_camera_switch_3 -> inet [label="ethernet"];
+	cluster_speaker_switch_2 -> laptop [label= "ethernet\nmonitoring only"];
+	cluster_speaker_switch_3 -> inet [label="ethernet"];
+	speaker_laptop -> cluster_speaker_vga_splitter [label = "vga", headlabel= "vga splitter: laptop in"];
+        cluster_speaker_vga_splitter -> projector [label = "vga"];
+	cluster_speaker_vga_splitter -> cluster_speaker_vgahdmi [label= "vga", headlabel="scaler: vga in"];
+	speaker_laptop -> cluster_speaker_vgahdmi [label= "minijack", headlabel= "scaler: audio in"];
+}
