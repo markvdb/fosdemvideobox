@@ -27,6 +27,36 @@ module d_type_hole(){
     translate([-9.5,-12,0]) circle(d=3.1);//lower left screw hole
 }
 
+d_type_blind_plate_height=31;
+d_type_blind_plate_width=26;
+module d_type_blind_plate_2d(){
+    module corner(){
+            difference(){
+                square([3.5,3.5]);
+                circle(r=3.5);
+            }
+    }
+    difference(){
+        square([d_type_blind_plate_width,d_type_blind_plate_height]);
+        translate([3.5,3.5]) union(){
+            circle(d=3.5);
+            rotate([0,0,180]) corner();
+        };
+        translate([3.5,d_type_blind_plate_height-3.5]) union(){
+            circle(d=3.5);
+            rotate([0,0,90]) corner();
+        };
+        translate([d_type_blind_plate_width-3.5,d_type_blind_plate_height-3.5]) union(){
+            circle(d=3.5);
+            corner();
+        }
+        translate([d_type_blind_plate_width-3.5,3.5]) union(){
+            circle(d=3.5);
+            rotate([0,0,270]) corner();
+        };
+    }
+}
+
 front_panel_height=case_height-2*acrylic;
 module front_panel_2d(){
     difference(){
@@ -80,6 +110,9 @@ module side_panel(){
     linear_extrude(height=acrylic) side_panel_2d(); 
 }
 
+module d_type_blind_plate(){
+    linear_extrude(height=3) d_type_blind_plate_2d();
+}
 // Parts inside the case
 // These need to stay global because they're used in the scene as well.
 psu_width=125;
@@ -129,7 +162,7 @@ module vga_splitter(){
         cube([width,depth,height]);
     translate([width/2, depth/2, height])
         color("yellow") {
-            text(halign="center", valign="center", text="VGA Split");
+            text(halign="center", valign="center", text="VGA splitter");
         }
 }
 
@@ -183,33 +216,6 @@ module banana_pi_lcd(){
         color("yellow") {
             text(halign="center", valign="center", text="LCD");
         }
-
-}
-
-ethernet_coupler_width=19.1;
-ethernet_coupler_height=35.6;
-ethernet_coupler_depth=27.8;
-module ethernet_coupler(){
-    //just an example from http://www.l-com.com/multimedia/eng_drawings/ECF504-C5.pdf
-    color("red")
-        cube([ethernet_coupler_width,ethernet_coupler_height,ethernet_coupler_depth]);
-    translate([ethernet_coupler_width/2, ethernet_coupler_height/2, ethernet_coupler_depth])
-        color("yellow") {
-            text(halign="center", valign="center", size=5, text="RJ45");
-        }
-}
-
-vga_coupler_width=34;
-vga_coupler_height=14;
-vga_coupler_depth=20;
-module vga_coupler(){
-    //just an example for now from http://www.datapro.net/products/vga-panel-mounting-coupler.html
-    color("red")
-        cube([vga_coupler_width,vga_coupler_height,vga_coupler_depth]);
-    translate([vga_coupler_width/2, vga_coupler_height/2, vga_coupler_depth])
-        color("yellow") {
-            text(halign="center", valign="center", size=5, text="VGA");
-        }
 }
 
 3d=1;
@@ -230,22 +236,22 @@ module generate_2d(){
     color("green") translate([case_width,front_panel_height]) front_panel_2d();
     color("orange") translate([case_width,2*front_panel_height]) side_panel_2d();
     color("purple") translate([case_width,3*front_panel_height]) side_panel_2d();
-    
+    translate([case_width,4*front_panel_height]) d_type_blind_plate_2d();
 }
 
 // Case in 3d
 module generate_3d(){
-    translate([-case_width/2, -case_depth/2, 0]) {
+    //translate([-case_width/2, -case_depth/2, 0]) {
         //Panels
         bottom_panel();
-        % translate([0,0,case_height-acrylic])
-            top_panel();
+        //% translate([0,0,case_height-acrylic])
+        //    top_panel();
         % translate([0,acrylic,acrylic])
             rotate([90,0,0])
                 front_panel();
-        % translate([0,case_depth,acrylic])
+        /*% translate([0,case_depth,acrylic])
             rotate([90,0,0])
-                back_panel();
+                back_panel();*/
         % translate([0,acrylic,acrylic])
             rotate([90,0,90])
                 side_panel();
@@ -274,13 +280,8 @@ module generate_3d(){
         translate([(case_width-lcd_width)/2,acrylic,acrylic+(front_panel_height-lcd_height)/2])
             rotate([90,0,0])
                 banana_pi_lcd();
-        translate([case_width-acrylic -(ethernet_coupler_width+5),-4,acrylic+(front_panel_height-ethernet_coupler_height)/2])
-            ethernet_coupler();
-        translate([case_width- acrylic - 2*(ethernet_coupler_width+5),-4,acrylic+(front_panel_height-ethernet_coupler_height)/2])
-            ethernet_coupler();
-        translate([case_width- acrylic - 3*(ethernet_coupler_width+5),-4,acrylic+(front_panel_height-ethernet_coupler_height)/2])
-            ethernet_coupler();
-        translate([acrylic + 10,-4,acrylic+(front_panel_height-vga_coupler_height)/2])
-            vga_coupler();
+        translate([d_hole_width/2+20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
     }
-}
+//}
