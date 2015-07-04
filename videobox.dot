@@ -3,6 +3,7 @@ digraph G {
 	node [shape=box];
 	speaker_laptop [label="speaker laptop"];
 	camera_with_audio_gear [label="camera with audio gear"];
+	room_sound_system [label="room sound system"];
 	inet [label="fosdem network"];
 
 	subgraph cluster_speaker {
@@ -10,6 +11,11 @@ digraph G {
 		color=lightgrey;
 		node [style=filled];
 		//parts
+		cluster_speaker_vga_in [label="vga in coupler\n(panel mount)", URL="http://eu.mouser.com/ProductDetail/Switchcraft/EHHD15FF/?qs=gNS5EA6ck2a8z5%2F0XaeFOw%3D%3D"];
+		cluster_speaker_vga_out [label="vga out coupler\n(panel mount)", URL="http://eu.mouser.com/ProductDetail/Switchcraft/EHHD15FF/?qs=gNS5EA6ck2a8z5%2F0XaeFOw%3D%3D"];
+		cluster_speaker_audio_in [label="audio in coupler\n(panel mount)", URL="http://www.bax-shop.nl/luidspreker-pluggen/neutrik-nl4mp-st-speakon-4-polig-chassisdeel-male/product-details.html"];
+		cluster_speaker_audio_out [label="audio out coupler\n(panel mount)", URL="http://www.bax-shop.nl/luidspreker-pluggen/neutrik-nl4mp-st-speakon-4-polig-chassisdeel-male/product-details.html"];
+		cluster_speaker_audio_splitter [label="audio splitter\n3.5mm jack f in\n2x 3.5mm jack m out", URL=""];
 		cluster_speaker_vga_splitter [label="vga splitter\n5v 500mA", URL="http://www.lindy.co.uk/audio-video-c2/splitters-c159/vga-c160/2-port-vga-splitter-150mhz-p6701"];
 		cluster_speaker_vgahdmi [label="vga-> hdmi scaler\n5v 1A", URL="http://www.lenkeng.com/china/showproduct.asp?id=153"];
 		cluster_speaker_h264 [label="h264 encoder\n12v 840mA", URL="https://www.blackmagicdesign.com/products/h264prorecorder/techspecs/"];
@@ -22,6 +28,12 @@ digraph G {
 		cluster_speaker_monitoring_panel [label="3.5 in lcd panel\n5v 250mA", URL="http://embeddedcomputer.nl/banana-pi-14/banana-pi-3-5-lcd-screen.html"];
 		cluster_psu [label="micro atx psu", URL="http://www.lc-power.com/produkte/netzteile/micro-atx/lc380m-v22"];
 		//internal cabling
+		cluster_speaker_vga_in -> cluster_speaker_vga_splitter [label="vga"];
+		cluster_speaker_vga_splitter -> cluster_speaker_vga_out [label="vga"];
+		cluster_speaker_vga_splitter -> cluster_speaker_vgahdmi [label="vga"];
+		cluster_speaker_audio_in -> cluster_speaker_audio_splitter [taillabel="screw terminals", headlabel="3.5mm jack m"];
+		cluster_speaker_audio_splitter -> cluster_speaker_vgahdmi [label="minijack", taillabel="3.5mm jack f", headlabel="3.5mm jack m"];
+		cluster_speaker_audio_splitter -> cluster_speaker_audio_out [label="minijack", taillabel="3.5mm jack f", headlabel="screw terminals"];
 		cluster_speaker_vgahdmi -> cluster_speaker_h264 [label="hdmi"];
 		cluster_speaker_h264 -> cluster_speaker_bpi [label="usb"];
 		cluster_speaker_bpi -> cluster_speaker_switch [label="ethernet"];
@@ -58,15 +70,14 @@ digraph G {
 		label = "CAMERA ENCODER";
 	}
 
-	camera_with_audio_gear -> cluster_camera_h264 [label = "sdi", headlabel="encoder: sdi in"];
-	camera_with_audio_gear -> cluster_camera_h264 [label = "hdmi", headlabel="encoder: hdmi in"];
+	camera_with_audio_gear -> cluster_camera_h264 [label = "sdi", taillabel="BNC 75 Ohm connector", headlabel="BNC 75 Ohm connector with Neutrik reartwist"];
 	cluster_camera_switch_1 -> cluster_speaker_switch_1 [dir="both", label="ethernet"];
 	cluster_camera_switch_2 -> laptop [label= "ethernet\nmonitoring only"];
         cluster_camera_switch_3 -> inet [label="ethernet"];
 	cluster_speaker_switch_2 -> laptop [label= "ethernet\nmonitoring only"];
 	cluster_speaker_switch_3 -> inet [label="ethernet"];
-	speaker_laptop -> cluster_speaker_vga_splitter [label = "vga", headlabel= "vga splitter: laptop in"];
-        cluster_speaker_vga_splitter -> projector [label = "vga"];
-	cluster_speaker_vga_splitter -> cluster_speaker_vgahdmi [label= "vga", headlabel="scaler: vga in"];
-	speaker_laptop -> cluster_speaker_vgahdmi [label= "minijack", headlabel= "scaler: audio in"];
+	speaker_laptop -> cluster_speaker_vga_in [label = "vga"];
+        cluster_speaker_vga_out -> projector [label = "vga"];
+	speaker_laptop -> cluster_speaker_audio_in [label= "minijack male to speakon male"];
+	cluster_speaker_audio_out -> room_sound_system [label="speakon male to jack?"];
 }

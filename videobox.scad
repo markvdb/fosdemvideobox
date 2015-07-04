@@ -35,12 +35,10 @@ module front_panel_2d(){
         translate([2*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
         translate([3*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
         translate([4*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
-        translate([5*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
         translate([case_width-(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
         translate([case_width-(2*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
         translate([case_width-(3*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
         translate([case_width-(4*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(5*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();        
     }
 }
 
