@@ -111,8 +111,12 @@ module side_panel(){
     linear_extrude(height=acrylic) side_panel_2d(); 
 }
 
-module d_type_blind_plate(){
+module d_type_blind_plate(label){
     linear_extrude(height=3) d_type_blind_plate_2d();
+    translate([d_type_blind_plate_width/2, d_type_blind_plate_height/2, 3])
+    color("red") {
+        text(size=4,halign="center", valign="center", text=label);
+   }
 }
 // Parts inside the case
 // These need to stay global because they're used in the scene as well.
@@ -261,8 +265,8 @@ module generate_3d(){
                 side_panel();
         
         //Parts inside the case
-        translate([case_width-psu_width-acrylic,case_depth-psu_depth-acrylic,acrylic])
-            psu();
+        translate([case_width-acrylic,case_depth-psu_width-acrylic,acrylic])
+            rotate([0,0,90]) psu();
         translate([325,acrylic+10,0])
             rotate([0,0,90])
                 translate([0,0,acrylic])
@@ -284,28 +288,28 @@ module generate_3d(){
         // left side d type panel mount coupler plates
         translate([d_hole_width/2-(d_type_blind_plate_width-d_hole_width)/2+10,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("vga in");
         translate([d_hole_width*3/2-(d_type_blind_plate_width-d_hole_width)/2+20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("vga out");
         translate([d_hole_width*5/2-(d_type_blind_plate_width-d_hole_width)/2+30,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("audio in");
         translate([d_hole_width*7/2-(d_type_blind_plate_width-d_hole_width)/2+40,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("audio out");
         //right side d type panel mount coupler plates
         translate([case_width-d_hole_width*3/2-(d_type_blind_plate_width-d_hole_width)/2-10,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("spare");
         translate([case_width-d_hole_width*5/2-(d_type_blind_plate_width-d_hole_width)/2-20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("ethernet 3");
         translate([case_width-d_hole_width*7/2-(d_type_blind_plate_width-d_hole_width)/2-30,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("ethernet 2");
         translate([case_width-d_hole_width*9/2-(d_type_blind_plate_width-d_hole_width)/2-40,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
-                d_type_blind_plate();
+                d_type_blind_plate("ethernet 1");
     }
 //}
