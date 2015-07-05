@@ -21,10 +21,11 @@ module laser_surface(){
 
 d_hole_height=27.1;
 d_hole_width=23.6;
+d_screw_hole_diameter=3.1;
 module d_type_hole(){
-    circle(d=23.6);//d connector hole
-    translate([9.5,12,0]) circle(d=3.1);//upper right screw hole
-    translate([-9.5,-12,0]) circle(d=3.1);//lower left screw hole
+    circle(d=d_hole_width);//d connector hole
+    translate([9.5,12,0]) circle(d=d_screw_hole_diameter);//upper right screw hole
+    translate([-9.5,-12,0]) circle(d=d_screw_hole_diameter);//lower left screw hole
 }
 
 d_type_blind_plate_height=31;
@@ -61,14 +62,14 @@ front_panel_height=case_height-2*acrylic;
 module front_panel_2d(){
     difference(){
         square([case_width,front_panel_height]);
-        translate([d_hole_width/2+20,(front_panel_height)/2]) d_type_hole();
-        translate([2*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
-        translate([3*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
-        translate([4*(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(d_hole_width/2+20),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(2*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(3*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(4*(d_hole_width/2+20)),(front_panel_height)/2]) d_type_hole();
+        translate([d_hole_width+10,(front_panel_height)/2]) d_type_hole();
+        translate([2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([case_width-(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([case_width-2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([case_width-3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([case_width-4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
     }
 }
 
@@ -244,14 +245,14 @@ module generate_3d(){
     //translate([-case_width/2, -case_depth/2, 0]) {
         //Panels
         bottom_panel();
-        //% translate([0,0,case_height-acrylic])
-        //    top_panel();
+        % translate([0,0,case_height-acrylic])
+            top_panel();
         % translate([0,acrylic,acrylic])
             rotate([90,0,0])
                 front_panel();
-        /*% translate([0,case_depth,acrylic])
+        % translate([0,case_depth,acrylic])
             rotate([90,0,0])
-                back_panel();*/
+                back_panel();
         % translate([0,acrylic,acrylic])
             rotate([90,0,90])
                 side_panel();
@@ -280,7 +281,30 @@ module generate_3d(){
         translate([(case_width-lcd_width)/2,acrylic,acrylic+(front_panel_height-lcd_height)/2])
             rotate([90,0,0])
                 banana_pi_lcd();
-        translate([d_hole_width/2+20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+        // left side d type panel mount coupler plates
+        translate([d_hole_width/2-(d_type_blind_plate_width-d_hole_width)/2+10,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([d_hole_width*3/2-(d_type_blind_plate_width-d_hole_width)/2+20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([d_hole_width*5/2-(d_type_blind_plate_width-d_hole_width)/2+30,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([d_hole_width*7/2-(d_type_blind_plate_width-d_hole_width)/2+40,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        //right side d type panel mount coupler plates
+        translate([case_width-d_hole_width*3/2-(d_type_blind_plate_width-d_hole_width)/2-10,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([case_width-d_hole_width*5/2-(d_type_blind_plate_width-d_hole_width)/2-20,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([case_width-d_hole_width*7/2-(d_type_blind_plate_width-d_hole_width)/2-30,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
+            rotate([90,0,0])
+                d_type_blind_plate();
+        translate([case_width-d_hole_width*9/2-(d_type_blind_plate_width-d_hole_width)/2-40,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
                 d_type_blind_plate();
     }

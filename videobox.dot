@@ -78,6 +78,6 @@ digraph G {
 	cluster_speaker_switch_3 -> inet [label="ethernet"];
 	speaker_laptop -> cluster_speaker_vga_in [label = "vga"];
         cluster_speaker_vga_out -> projector [label = "vga"];
-	speaker_laptop -> cluster_speaker_audio_in [label= "minijack male to speakon male"];
-	cluster_speaker_audio_out -> room_sound_system [label="speakon male to jack?"];
+	speaker_laptop -> cluster_speaker_audio_in [taillabel= "minijack male", headlabel="speakon male"];
+	cluster_speaker_audio_out -> room_sound_system [taillabel="speakon male", headlabel="jack?"];
 }
