@@ -15,6 +15,7 @@ drawer_height=case_height-2*acrylic;
 // First 2D, then 3D
 
 // Components 2D
+// Outside case: 6mm arcylic
 module laser_surface(){
     % square([laser_x,laser_y]);
 }
@@ -90,6 +91,11 @@ module side_panel_2d(){
     square([case_depth-2*acrylic,case_height-2*acrylic]); 
 }
 
+// Components 2D
+// Drawer: 4mm acrylic
+module drawer_bottom_panel_2d(){
+    square([drawer_width,case_depth-2*acrylic]);
+}
 // Panel components 3D
 module front_panel(){
     linear_extrude(height=acrylic) front_panel_2d();    
@@ -111,6 +117,9 @@ module side_panel(){
     linear_extrude(height=acrylic) side_panel_2d(); 
 }
 
+module drawer_bottom_panel(){
+    color("orange") linear_extrude(height=drawer_acrylic) drawer_bottom_panel_2d();
+}
 module d_type_blind_plate(label){
     linear_extrude(height=3) d_type_blind_plate_2d();
     translate([d_type_blind_plate_width/2, d_type_blind_plate_height/2, 3])
@@ -133,14 +142,14 @@ module psu(){
        }
 }
 
+ssd_width=100;
+ssd_height=9.5;
 module ssd_25_inch(){
     //9.5mm is most common
-    width=100;
     depth=69.85;
-    height=9.5;
     color("green")
-        cube([width,depth,height]);
-    translate([width/2, depth/2, height])
+        cube([ssd_width,depth,ssd_height]);
+    translate([ssd_width/2, depth/2, ssd_height])
         color("yellow") {
             text(halign="center", valign="center", text="SSD");
         }
@@ -263,24 +272,25 @@ module generate_3d(){
         % translate([case_width-acrylic,acrylic,acrylic])
             rotate([90,0,90])
                 side_panel();
-        
+        translate([acrylic,acrylic,acrylic])
+            drawer_bottom_panel();
         //Parts inside the case
-        translate([case_width-acrylic,case_depth-psu_width-acrylic,acrylic])
+        translate([psu_depth+acrylic+drawer_acrylic,acrylic+30+ethernet_switch_depth,acrylic+drawer_acrylic])
             rotate([0,0,90]) psu();
-        translate([325,acrylic+10,0])
-            rotate([0,0,90])
-                translate([0,0,acrylic])
+        translate([case_width-ssd_width-acrylic-drawer_acrylic-10,acrylic+30,0])
+            rotate([0,0,0])
+                translate([0,0,acrylic+drawer_acrylic+ethernet_switch_height+banana_pi_height+10])
                     ssd_25_inch();
-        translate([case_width-ethernet_switch_width-acrylic,acrylic+30,acrylic])
+        translate([case_width-ethernet_switch_width-acrylic-drawer_acrylic-10,acrylic+30,acrylic+drawer_acrylic])
             ethernet_switch();
-        // translate([??,??,??])
-        //     vga_splitter();
-        translate([vga_hdmi_converter_depth+acrylic,acrylic,acrylic])
-            rotate([0,0,90])
+        translate([acrylic+drawer_acrylic,acrylic+30,acrylic+drawer_acrylic+vga_hdmi_converter_height+15])
+             vga_splitter();
+        translate([acrylic+drawer_acrylic,acrylic+30,acrylic+drawer_acrylic])
+            rotate([0,0,0])
                 vga_hdmi_converter();
-        translate([acrylic+vga_hdmi_converter_depth+20,acrylic+110,acrylic])
+        translate([acrylic+vga_hdmi_converter_width+15,acrylic+30,acrylic+drawer_acrylic])
             h264_encoder();
-        translate([(case_width-banana_pi_width)/2-20, acrylic+30, acrylic+5])
+        translate([case_width-acrylic-drawer_acrylic-ethernet_switch_width-10, acrylic+30, acrylic+drawer_acrylic+5+ethernet_switch_height])
             banana_pi();
         translate([(case_width-lcd_width)/2,acrylic,acrylic+(front_panel_height-lcd_height)/2])
             rotate([90,0,0])
