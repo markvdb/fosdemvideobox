@@ -7,37 +7,47 @@ $fn = 50;
 laser_x=1220;
 laser_y=610;
 
+// Nuts and bolts
+case_bolt_d=3;
+case_bolt_length=12;
+case_nut_d=3;
+case_nut_max_width=case_nut_d*2;
+case_nut_min_width=case_nut_d*1.8;
+case_nut_height=case_nut_d*0.9;
+
 // Case size 
 acrylic=6;
 case_width=438.15;//17.25" rack unit width
 case_height=88.1;//2U rack height
 case_depth=304.8;//1/2 24" rack depth
+bottom_panel_width=case_width;
+side_panel_width=case_depth-2*acrylic;
+side_panel_height=case_height-2*acrylic;
+side_panel_teeth=5;
+case_teeth_height=acrylic;
+case_teeth_width=side_panel_width/(side_panel_teeth*2-1);
+
 
 // Panels
+
 d_hole_height=27.1;
 d_hole_width=23.6;
 d_screw_hole_diameter=3.1;
 front_panel_height=case_height-2*acrylic;
+spacer_hole_diameter=3;
 
 // Parts 
-banana_pi_width=92;
-banana_pi_depth=60;
-banana_pi_height=10; //just a wild guess for now
 d_type_blind_plate_height=31;
 d_type_blind_plate_width=26;
-ethernet_switch_width=97;
-ethernet_switch_depth=79;
-ethernet_switch_height=28;
 h264_encoder_depth=123.19;
+h264_encoder_inner_depth=97.5;
 h264_encoder_height=23.114;
 h264_encoder_width=107.70;
-lcd_width=76.9;
-lcd_height_nt=63.9;
-lcd_height_t=65.3;
-lcd_depth=3.26;
-// Setting these so we can just change it here
-lcd_height = lcd_height_nt;
-// lcd_height = lcd_height_t;
+lcd_width=80;
+lcd_height=67;
+lcd_depth=6;
+lcd_mounting_panel_width=93;
+lcd_mounting_panel_height=70;
 psu_width=125;
 psu_height=63;
 psu_depth=145;
@@ -64,6 +74,57 @@ module d_type_hole(){
     translate([9.5,12,0]) circle(d=d_screw_hole_diameter);//upper right screw hole
     translate([-9.5,-12,0]) circle(d=d_screw_hole_diameter);//lower left screw hole
 }
+
+module case_bolt_hole_2d(){
+    union(){
+        translate([(case_nut_max_width-case_bolt_d)/2,0])
+            square([case_bolt_d,case_bolt_length-acrylic]);
+        square([case_nut_max_width,case_nut_height*1.1]);
+    }
+}
+
+module case_bolt_hole_centered(){
+    //center through bolt
+    translate([-case_nut_max_width/2,0]) case_bolt_hole_2d();
+}
+
+module lcd_hole(){
+    square([lcd_width,lcd_height]);
+    translate([lcd_width+3.5, lcd_height-4.9]) circle(d=3);//upper right lcd backing panel hole
+    translate([lcd_width+3.5, 7.3]) circle(d=3);//lower right lcd backing panel hole
+    translate([-3.5, lcd_height-4.9]) circle(d=3);//upper left lcd backing panel hole
+    translate([-3.5, 15]) circle(d=3);//lower left lcd backing panel hole
+}
+
+module spacer_holes_vga_hdmi_2d(){
+    circle(d=spacer_hole_diameter);
+    translate([169,0]) circle(d=spacer_hole_diameter);
+    translate([0,49]) circle(d=spacer_hole_diameter);
+    translate([169,49]) circle(d=spacer_hole_diameter);
+}
+
+module spacer_holes_vga_splitter_2d(){
+    circle(d=spacer_hole_diameter);
+    translate([43.3,0]) circle(d=spacer_hole_diameter);
+    translate([43.3,43.3]) circle(d=spacer_hole_diameter);
+    translate([0,43.3]) circle(d=spacer_hole_diameter);
+}
+module spacer_holes_bpi_2d(){
+    circle(d=spacer_hole_diameter);
+    translate([85.4,0]) circle(d=spacer_hole_diameter);
+    translate([0,54]) circle(d=spacer_hole_diameter);
+    translate([85.4,49]) circle(d=spacer_hole_diameter);
+}
+module spacer_holes_switch_2d(){
+    circle(d=spacer_hole_diameter);
+    translate([70,0]) circle(d=spacer_hole_diameter);
+}
+module spacer_holes_ssd_2d(){
+    circle(d=spacer_hole_diameter);
+    translate([76,0]) circle(d=spacer_hole_diameter);
+    translate([0,62]) circle(d=spacer_hole_diameter);
+    translate([76,62]) circle(d=spacer_hole_diameter);
+}    
 
 module d_type_blind_plate_2d(){
     module corner(){
@@ -93,9 +154,41 @@ module d_type_blind_plate_2d(){
     }
 }
 
-module front_panel_2d(){
+module h264_holder_holes_2d(){
+    //top spacer holes
+    translate([-(h264_encoder_width+8)/2,(h264_encoder_inner_depth-8)/2]) circle(d=spacer_hole_diameter);
+    translate([(h264_encoder_width+8)/2,(h264_encoder_inner_depth-8)/2]) circle(d=spacer_hole_diameter);
+    translate([(h264_encoder_width+8)/2,-(h264_encoder_inner_depth-8)/2]) circle(d=spacer_hole_diameter);
+    translate([-(h264_encoder_width+8)/2,-(h264_encoder_inner_depth-8)/2]) circle(d=spacer_hole_diameter);
+}    
+module h264_holder_bottom_2d(){
+    difference(){
+        square([h264_encoder_width+16,h264_encoder_inner_depth+16], center=true);
+        square([h264_encoder_width,h264_encoder_inner_depth], center=true);
+        h264_holder_holes_2d();
+    }
+}
+module h264_holder_top_2d(){
+    difference(){
+        square([h264_encoder_width+16,h264_encoder_inner_depth], center=true);
+        square([h264_encoder_width,h264_encoder_inner_depth-16], center=true);
+        h264_holder_holes_2d();
+    }    
+}
+
+module frack_panel_2d(){
     difference(){
         square([case_width,front_panel_height]);
+        translate([acrylic/2,front_panel_height/8]) circle(d=3);
+        translate([acrylic/2,front_panel_height*7/8]) circle(d=3);
+        translate([case_width-acrylic/2,front_panel_height/8]) circle(d=3);
+        translate([case_width-acrylic/2,front_panel_height*7/8]) circle(d=3);
+    }
+}
+
+module front_panel_2d(){
+    difference(){
+        frack_panel_2d();
         translate([d_hole_width+10,(front_panel_height)/2]) d_type_hole();
         translate([2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
         translate([3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
@@ -104,38 +197,65 @@ module front_panel_2d(){
         translate([case_width-2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
         translate([case_width-3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
         translate([case_width-4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
     }
 }
 
 module back_panel_2d(){
-    back_panel_height=front_panel_height;
-    square([case_width,back_panel_height]);
-}
-
-module top_panel_2d(){
-    square([case_width, case_depth]);
+    frack_panel_2d();
 }
 
 module bottom_panel_2d(){
-    square([case_width, case_depth]);
+    difference(){
+        top_panel_2d();
+        translate([acrylic+8,30]) spacer_holes_vga_hdmi_2d();
+        translate([acrylic+90,140]) spacer_holes_vga_splitter_2d();
+        translate([acrylic+217,acrylic+20]) spacer_holes_bpi_2d();
+        translate([acrylic+340,acrylic+35]) spacer_holes_switch_2d();
+        translate([acrylic+330,acrylic+79]) spacer_holes_ssd_2d();
+        translate([acrylic+235,acrylic+170]) h264_holder_holes_2d();
+    }
+}
+
+module top_panel_2d(){
+    difference(){
+        square([case_width, case_depth]);
+        translate([0,acrylic]) for( i=[0:side_panel_teeth-1]){
+            rotate([0,0,90]) translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
+            rotate([0,0,90]) translate([(i*2+3/2)*case_teeth_width,-case_teeth_height/2])  circle(d=3);
+        }
+    translate([bottom_panel_width-acrylic,acrylic]) for( i=[0:side_panel_teeth-1]){
+            rotate([0,0,90]) translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
+            rotate([0,0,90]) translate([(i*2+3/2)*case_teeth_width,-case_teeth_height/2])  circle(d=3);
+        }
+    }
 }
 
 module side_panel_2d(){
-    square([case_depth-2*acrylic,case_height-2*acrylic]); 
+    union(){
+        difference(){
+            square([side_panel_width,side_panel_height]);
+            for( i=[0:side_panel_teeth-1]){
+                translate([case_teeth_width*(2*i+3/2)+case_bolt_d,case_bolt_length-acrylic]) rotate(180,0) case_bolt_hole_2d();
+                translate([case_teeth_width*(2*i+3/2)-case_bolt_d,side_panel_height-acrylic]) case_bolt_hole_2d();
+            }
+            //t slots for front panel
+            //highest bolt
+            translate([case_bolt_length-acrylic,case_height/8]) rotate(90,0) case_bolt_hole_centered();
+            //lowest bolt
+            translate([case_bolt_length-acrylic,front_panel_height*7/8]) rotate(90,0) case_bolt_hole_centered();
+            //t slots for back panel
+            translate([case_depth-case_bolt_length-acrylic,front_panel_height*7/8]) rotate(-90,0) case_bolt_hole_centered();
+            translate([case_depth-case_bolt_length-acrylic,front_panel_height/8]) rotate(-90,0) case_bolt_hole_centered();
+        }
+        //teeth
+        for( i=[0:side_panel_teeth-1]){
+            translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
+            translate([i*2*case_teeth_width,side_panel_height]) square([case_teeth_width,case_teeth_height]);
+        }
+    }
 }
 
-// Components 2D
-// Drawer: 4mm acrylic
-module drawer_bottom_panel_2d(){
-    //square([drawer_width,case_depth-2*acrylic]);
-    square([drawer_width,drawer_depth-drawer_acrylic]);
-}
-module drawer_side_panel_2d(){
-    square([drawer_depth-drawer_acrylic,drawer_height-drawer_acrylic]);
-}
-module drawer_back_panel_2d(){
-    square([drawer_width,drawer_back_panel_height]);
-}
 // Panel components 3D
 module front_panel(){
     linear_extrude(height=acrylic) front_panel_2d();    
@@ -150,80 +270,19 @@ module top_panel(){
 }
 
 module bottom_panel(){
-    color("black") linear_extrude(height=acrylic) bottom_panel_2d();
+    % linear_extrude(height=acrylic) bottom_panel_2d();
 }
 
 module side_panel(){
     linear_extrude(height=acrylic) side_panel_2d(); 
 }
 
-module drawer_bottom_panel(){
-    color("orange") linear_extrude(height=drawer_acrylic) drawer_bottom_panel_2d();
-}
-module drawer_side_panel(){
-    color("pink") linear_extrude(height=drawer_acrylic) drawer_side_panel_2d();
-}
-module drawer_back_panel(){
-    color("green") linear_extrude(height=drawer_acrylic) drawer_back_panel_2d();
-}
 module d_type_blind_plate(label){
     linear_extrude(height=3) d_type_blind_plate_2d();
     translate([d_type_blind_plate_width/2, d_type_blind_plate_height/2, 3])
     color("red") {
         text(size=4,halign="center", valign="center", text=label);
    }
-}
-// Parts inside the case
-
-module psu(){
-    color("red")
-        cube([psu_width,psu_depth,psu_height]);
-    translate([psu_width/2, psu_depth/2, psu_height])
-        color("yellow") {
-            text(halign="center", valign="center", text="PSU");
-       }
-}
-
-module ssd_25_inch(){
-    color("green")
-        cube([ssd_width,ssd_depth,ssd_height]);
-    translate([ssd_width/2, ssd_depth/2, ssd_height])
-        color("yellow") {
-            text(halign="center", valign="center", text="SSD");
-        }
-}
-
-module ethernet_switch(){
-    color("red")
-        cube([ethernet_switch_width,ethernet_switch_depth,ethernet_switch_height]);
-    translate([ethernet_switch_width/2, ethernet_switch_depth/2, ethernet_switch_height])
-        color("yellow") {
-            text(halign="center", valign="center", text="Ethernet");
-        }
-}
-module h264_encoder(){
-    color("purple")
-        cube([h264_encoder_width,h264_encoder_depth,h264_encoder_height]);
-    translate([h264_encoder_width/2, h264_encoder_depth/2, h264_encoder_height])
-        color("yellow") {
-            text(halign="center", valign="center", text="H264 enc");
-        }
-}
-module banana_pi(){
-    color("yellow")
-        cube([banana_pi_width,banana_pi_depth,banana_pi_height]);
-    translate([banana_pi_width/2, banana_pi_depth/2, banana_pi_height])
-        color("red") {
-            text(halign="center", valign="center", text="BPI");
-        }
-}
-module banana_pi_lcd(){
-    color("blue")
-        cube([lcd_width,lcd_height,lcd_depth]); //non-touch
-    translate([lcd_width/2, lcd_height/2, lcd_depth])
-        color("yellow") {
-            text(halign="center", valign="center", text="LCD");
-        }
 }
 
 3d=1;
@@ -252,7 +311,7 @@ module generate_2d(){
 module generate_3d(){
     //translate([-case_width/2, -case_depth/2, 0]) {
         //Panels
-        9bottom_panel();
+        % bottom_panel();
         % translate([0,0,case_height-acrylic])
             top_panel();
         % translate([0,acrylic,acrylic])
@@ -268,35 +327,6 @@ module generate_3d(){
             rotate([90,0,90])
                 side_panel();
 
-        // drawer
-        translate([acrylic,acrylic,acrylic])
-            drawer_bottom_panel();
-        translate([acrylic, acrylic, acrylic+drawer_acrylic])
-            rotate([90,0,90])
-                drawer_side_panel();
-        translate([case_width-acrylic-drawer_acrylic, acrylic, acrylic+drawer_acrylic])
-            rotate([90,0,90])
-                drawer_side_panel();
-        translate([acrylic, drawer_depth+acrylic,acrylic])
-            rotate([90,0,0])
-                drawer_back_panel();
-
-        // parts inside the case
-        translate([psu_depth+acrylic+drawer_acrylic,acrylic+30,acrylic+drawer_acrylic])
-            rotate([0,0,90]) psu();
-        translate([case_width-ssd_width-acrylic-drawer_acrylic-10,acrylic+30,0])
-            rotate([0,0,0])
-                translate([0,0,acrylic+drawer_acrylic+ethernet_switch_height+banana_pi_height+10])
-                    ssd_25_inch();
-        translate([case_width-ethernet_switch_width-acrylic-drawer_acrylic-10,acrylic+30,acrylic+drawer_acrylic])
-            ethernet_switch();
-        translate([case_width-acrylic-drawer_acrylic-ethernet_switch_width-30-h264_encoder_width,acrylic+30,acrylic+drawer_acrylic])
-            h264_encoder();
-        translate([case_width-acrylic-drawer_acrylic-ethernet_switch_width-10, acrylic+30, acrylic+drawer_acrylic+5+ethernet_switch_height])
-            banana_pi();
-        translate([(case_width-lcd_width)/2,acrylic,acrylic+(front_panel_height-lcd_height)/2])
-            rotate([90,0,0])
-                banana_pi_lcd();
         // left side d type panel mount coupler plates
         translate([d_hole_width/2-(d_type_blind_plate_width-d_hole_width)/2+10,0,acrylic+(front_panel_height-d_type_blind_plate_height)/2])
             rotate([90,0,0])
