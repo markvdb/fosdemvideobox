@@ -51,16 +51,11 @@ lcd_mounting_panel_height=70;
 psu_width=125;
 psu_height=63;
 psu_depth=145;
+psu_cutout_width=81;
+psu_cutout_depth=84;
 ssd_depth=69.85;
 ssd_height=9.5;
 ssd_width=100;
-
-// Drawer
-drawer_acrylic=4;//
-drawer_width=case_width-2*acrylic;
-drawer_height=case_height-2*acrylic;
-drawer_depth=acrylic+30+psu_width;//6mm ridge left in the middle of the case
-drawer_back_panel_height=drawer_height;
 
 /* Components 2D
 ------------------------------------------*/
@@ -175,8 +170,14 @@ module h264_holder_top_2d(){
         h264_holder_holes_2d();
     }    
 }
-
+module psu_back_holes_2d(){
+    //attachment holes for back plate+ venting grille cutouts
+    translate([psu_width-6.3,6.3]) circle(d=3);
+    translate([psu_width-6.3,psu_height]) circle(d=3);
+    translate([6.3,psu_height/2]) circle(d=3);    
+}
 module frack_panel_2d(){
+    //// silly name for parent of front and back panel
     difference(){
         square([case_width,front_panel_height]);
         translate([acrylic/2,front_panel_height/8]) circle(d=3);
@@ -202,22 +203,14 @@ module front_panel_2d(){
 }
 
 module back_panel_2d(){
-    frack_panel_2d();
-}
-
-module bottom_panel_2d(){
     difference(){
-        top_panel_2d();
-        translate([acrylic+8,30]) spacer_holes_vga_hdmi_2d();
-        translate([acrylic+90,140]) spacer_holes_vga_splitter_2d();
-        translate([acrylic+217,acrylic+20]) spacer_holes_bpi_2d();
-        translate([acrylic+340,acrylic+35]) spacer_holes_switch_2d();
-        translate([acrylic+330,acrylic+79]) spacer_holes_ssd_2d();
-        translate([acrylic+235,acrylic+170]) h264_holder_holes_2d();
+        frack_panel_2d();
+        translate([case_width-acrylic-psu_width,0]) psu_back_holes_2d();
     }
 }
 
-module top_panel_2d(){
+module toptom_panel_2d(){
+    //top and bottom panel inherit from this
     difference(){
         square([case_width, case_depth]);
         translate([0,acrylic]) for( i=[0:side_panel_teeth-1]){
@@ -228,6 +221,25 @@ module top_panel_2d(){
             rotate([0,0,90]) translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
             rotate([0,0,90]) translate([(i*2+3/2)*case_teeth_width,-case_teeth_height/2])  circle(d=3);
         }
+    }
+}
+module bottom_panel_2d(){
+    difference(){
+        toptom_panel_2d();
+        translate([acrylic+8,30]) spacer_holes_vga_hdmi_2d();
+        translate([acrylic+90,140]) spacer_holes_vga_splitter_2d();
+        translate([acrylic+217,acrylic+20]) spacer_holes_bpi_2d();
+        translate([acrylic+340,acrylic+35]) spacer_holes_switch_2d();
+        translate([acrylic+330,acrylic+79]) spacer_holes_ssd_2d();
+        translate([acrylic+235,acrylic+170]) h264_holder_holes_2d();
+    }
+}
+
+module top_panel_2d(){
+
+    difference(){
+        toptom_panel_2d();
+        translate([case_width-2*acrylic-psu_width+(psu_width-psu_cutout_width)/2,case_depth-acrylic-psu_depth+(psu_depth-psu_cutout_depth)/2]) square([psu_cutout_width,psu_cutout_depth]);
     }
 }
 
