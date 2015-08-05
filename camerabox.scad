@@ -51,7 +51,7 @@ lcd_mounting_panel_height=70;
 psu_width=125;
 psu_height=63;
 psu_depth=145;
-psu_cutout_width=81;
+psu_cutout_width=71;
 psu_cutout_depth=84;
 ssd_depth=69.85;
 ssd_height=9.5;
@@ -86,9 +86,9 @@ module case_bolt_hole_centered(){
 module lcd_hole(){
     square([lcd_width,lcd_height]);
     translate([lcd_width+3.5, lcd_height-4.9]) circle(d=3);//upper right lcd backing panel hole
-    translate([lcd_width+3.5, 7.3]) circle(d=3);//lower right lcd backing panel hole
+    translate([lcd_width+3.5, 15]) circle(d=3);//lower right lcd backing panel hole
     translate([-3.5, lcd_height-4.9]) circle(d=3);//upper left lcd backing panel hole
-    translate([-3.5, 15]) circle(d=3);//lower left lcd backing panel hole
+    translate([-3.5, 7.3]) circle(d=3);//lower left lcd backing panel hole
 }
 
 module spacer_holes_vga_hdmi_2d(){
@@ -173,9 +173,77 @@ module h264_holder_top_2d(){
 module psu_back_holes_2d(){
     //attachment holes for back plate+ venting grille cutouts
     translate([psu_width-6.3,6.3]) circle(d=3);
-    translate([psu_width-6.3,psu_height]) circle(d=3);
-    translate([6.3,psu_height/2]) circle(d=3);    
+    translate([psu_width-6.3,psu_height-6.3]) circle(d=3);
+    translate([6.3,psu_height/2]) circle(d=3);
+    //power button and 220v in square
+    button_hole_width=48;
+    button_hole_height=24;
+    translate([psu_width-58-button_hole_width,28]) square([button_hole_width,button_hole_height]);
+    vent_square_width=44;
+    vent_square_height=52;
+    translate([psu_width-12-vent_square_width,7]) square([vent_square_width,vent_square_height]);
 }
+
+module top_ventilation_holes_2d(){
+    vent_circle_diameter=10;
+    vent_circle_distance=vent_circle_diameter*1.5;
+    letter_spacing=vent_circle_diameter*5*1.3;
+    xoffset=40;
+    module c(){
+        circle(d=vent_circle_diameter);
+    }
+    
+    module letter_f(){
+        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c();
+        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+        translate([0,vent_circle_distance]) c();
+        translate([0,0]) c();
+    }
+    module letter_o(){
+        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c();              translate([vent_circle_distance*2,vent_circle_distance*3]) c();
+        translate([0,vent_circle_distance*2]) c();              translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+        translate([0,vent_circle_distance]) c();                translate([vent_circle_distance*2,vent_circle_distance*1]) c();
+        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
+    }
+    module letter_s(){
+        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c();              
+        translate([0,vent_circle_distance*2]) c();  translate([vent_circle_distance*1,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+                                                                                                                    translate([vent_circle_distance*2,vent_circle_distance*1]) c();
+        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
+    }
+    module letter_d(){
+        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c();              translate([vent_circle_distance*2,vent_circle_distance*3]) c();
+        translate([0,vent_circle_distance*2]) c();              translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+        translate([0,vent_circle_distance]) c();                translate([vent_circle_distance*2,vent_circle_distance*1]) c();
+        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
+    }
+    module letter_e(){
+        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c();
+        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+        translate([0,vent_circle_distance]) c();
+        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
+    }
+    module letter_m(){
+        translate([0,vent_circle_distance*4]) c();                  translate([vent_circle_distance*2,vent_circle_distance*4]) c();
+        translate([0,vent_circle_distance*3]) c(); translate([vent_circle_distance,vent_circle_distance*3]) c();translate([vent_circle_distance*2,vent_circle_distance*3]) c();
+        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
+        translate([0,vent_circle_distance]) c(); translate([vent_circle_distance*2,vent_circle_distance]) c();
+        translate([0,0]) c();                   translate([vent_circle_distance*2,0]) c();
+    }
+    translate([xoffset+0,100]) letter_f();
+    translate([xoffset+letter_spacing,100]) letter_o();
+    translate([xoffset+letter_spacing*2,100]) letter_s();
+    translate([xoffset+letter_spacing*3,100]) letter_d();    
+    translate([xoffset+letter_spacing*4,100]) letter_e();    
+    translate([xoffset+letter_spacing*5,100]) letter_m();    
+
+}
+
 module frack_panel_2d(){
     //// silly name for parent of front and back panel
     difference(){
@@ -198,6 +266,17 @@ module front_panel_2d(){
         translate([case_width-2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
         translate([case_width-3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
         translate([case_width-4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+        translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
+    }
+}
+
+module front_panel_backing_2d(){
+    front_panel_backing_hole_height=32;
+    front_panel_backing_hole_width=135;
+    difference(){
+        frack_panel_2d();
+        translate([acrylic+10,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
+        translate([case_width-acrylic-10-front_panel_backing_hole_width,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
         translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
     }
 }
@@ -236,10 +315,11 @@ module bottom_panel_2d(){
 }
 
 module top_panel_2d(){
-
     difference(){
         toptom_panel_2d();
-        translate([case_width-2*acrylic-psu_width+(psu_width-psu_cutout_width)/2,case_depth-acrylic-psu_depth+(psu_depth-psu_cutout_depth)/2]) square([psu_cutout_width,psu_cutout_depth]);
+        translate([case_width-2*acrylic-psu_width/2+5,case_depth-acrylic-psu_depth/2]) circle(d=psu_cutout_width);
+        top_ventilation_holes_2d();
+        //import("/home/lusis/Downloads/fosdemlogo.dxf");
     }
 }
 
@@ -253,7 +333,7 @@ module side_panel_2d(){
             }
             //t slots for front panel
             //highest bolt
-            translate([case_bolt_length-acrylic,case_height/8]) rotate(90,0) case_bolt_hole_centered();
+            translate([case_bolt_length-acrylic,front_panel_height/8]) rotate(90,0) case_bolt_hole_centered();
             //lowest bolt
             translate([case_bolt_length-acrylic,front_panel_height*7/8]) rotate(90,0) case_bolt_hole_centered();
             //t slots for back panel
@@ -300,7 +380,8 @@ module d_type_blind_plate(label){
 3d=1;
 
 if(3d){
-    generate_3d();
+    front_panel_2d();
+    //generate_3d();
 }
 else {
     generate_2d();
@@ -316,7 +397,6 @@ module generate_2d(){
     color("orange") translate([case_width,2*front_panel_height]) side_panel_2d();
     color("purple") translate([case_width,3*front_panel_height]) side_panel_2d();
     translate([case_width,4*front_panel_height]) d_type_blind_plate_2d();
-    //TODO: drawer panels
 }
 
 // Case in 3d
