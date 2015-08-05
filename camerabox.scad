@@ -57,6 +57,7 @@ ssd_depth=69.85;
 ssd_height=9.5;
 ssd_width=100;
 
+
 /* Components 2D
 ------------------------------------------*/
 // Case
@@ -184,66 +185,6 @@ module psu_back_holes_2d(){
     translate([psu_width-12-vent_square_width,7]) square([vent_square_width,vent_square_height]);
 }
 
-module top_ventilation_holes_2d(){
-    vent_circle_diameter=10;
-    vent_circle_distance=vent_circle_diameter*1.5;
-    letter_spacing=vent_circle_diameter*5*1.3;
-    xoffset=40;
-    module c(){
-        circle(d=vent_circle_diameter);
-    }
-    
-    module letter_f(){
-        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c();
-        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-        translate([0,vent_circle_distance]) c();
-        translate([0,0]) c();
-    }
-    module letter_o(){
-        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c();              translate([vent_circle_distance*2,vent_circle_distance*3]) c();
-        translate([0,vent_circle_distance*2]) c();              translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-        translate([0,vent_circle_distance]) c();                translate([vent_circle_distance*2,vent_circle_distance*1]) c();
-        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
-    }
-    module letter_s(){
-        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c();              
-        translate([0,vent_circle_distance*2]) c();  translate([vent_circle_distance*1,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-                                                                                                                    translate([vent_circle_distance*2,vent_circle_distance*1]) c();
-        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
-    }
-    module letter_d(){
-        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c();              translate([vent_circle_distance*2,vent_circle_distance*3]) c();
-        translate([0,vent_circle_distance*2]) c();              translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-        translate([0,vent_circle_distance]) c();                translate([vent_circle_distance*2,vent_circle_distance*1]) c();
-        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
-    }
-    module letter_e(){
-        translate([0,vent_circle_distance*4]) c(); translate([vent_circle_distance,vent_circle_distance*4]) c(); translate([vent_circle_distance*2,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c();
-        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-        translate([0,vent_circle_distance]) c();
-        translate([0,0]) c(); translate([vent_circle_distance,0]) c(); translate([vent_circle_distance*2,0]) c();
-    }
-    module letter_m(){
-        translate([0,vent_circle_distance*4]) c();                  translate([vent_circle_distance*2,vent_circle_distance*4]) c();
-        translate([0,vent_circle_distance*3]) c(); translate([vent_circle_distance,vent_circle_distance*3]) c();translate([vent_circle_distance*2,vent_circle_distance*3]) c();
-        translate([0,vent_circle_distance*2]) c(); translate([vent_circle_distance*2,vent_circle_distance*2]) c();
-        translate([0,vent_circle_distance]) c(); translate([vent_circle_distance*2,vent_circle_distance]) c();
-        translate([0,0]) c();                   translate([vent_circle_distance*2,0]) c();
-    }
-    translate([xoffset+0,100]) letter_f();
-    translate([xoffset+letter_spacing,100]) letter_o();
-    translate([xoffset+letter_spacing*2,100]) letter_s();
-    translate([xoffset+letter_spacing*3,100]) letter_d();    
-    translate([xoffset+letter_spacing*4,100]) letter_e();    
-    translate([xoffset+letter_spacing*5,100]) letter_m();    
-
-}
-
 module frack_panel_2d(){
     //// silly name for parent of front and back panel
     difference(){
@@ -315,11 +256,19 @@ module bottom_panel_2d(){
 }
 
 module top_panel_2d(){
+    honeycomb_rows=20;
+    honeycomb_columns=41;
+    honeycomb_psu_rows=10;
+    honeycomb_psu_columns=10;
+    honeycomb_cell_interior=8;
+    honeycomb_walls=2;
+
     difference(){
         toptom_panel_2d();
-        translate([case_width-2*acrylic-psu_width/2+5,case_depth-acrylic-psu_depth/2]) circle(d=psu_cutout_width);
-        top_ventilation_holes_2d();
-        //import("/home/lusis/Downloads/fosdemlogo.dxf");
+        //translate([case_width-2*acrylic-psu_width/2+5,case_depth-acrylic-psu_depth/2]) circle(d=psu_cutout_width);
+        translate([case_width-2*acrylic-psu_width+psu_cutout_width/2-8, case_depth-acrylic-psu_depth+psu_cutout_depth/2-7]) honeycomb(honeycomb_psu_rows, honeycomb_psu_columns, honeycomb_cell_interior, honeycomb_walls);
+        translate([acrylic+13,acrylic+10]) honeycomb(honeycomb_rows, honeycomb_columns, honeycomb_cell_interior, honeycomb_walls);
+        import(file="/home/lusis/fosdembox/fosdem_logo_and_gear.dxf");
     }
 }
 
@@ -377,10 +326,25 @@ module d_type_blind_plate(label){
    }
 }
 
+module honeycomb(rows, columns, cell_interior, walls) {
+    for (i = [0 : rows - 1]) {
+            for (j = [0 : (columns - 1 - i%2)]) {
+                translate([(j + (i % 2) /2) * (cell_interior + walls),
+                           (cell_interior + walls) * i * sqrt(3) / 2])
+                rotate([0,0,30])
+                difference() {
+                  //circle(r=(cell_interior + 2 * walls)/sqrt(3),$fn=6); //comment out to get inverse
+                  circle(r=cell_interior/sqrt(3),$fn=6);
+                }
+            }
+    }
+}
+
+
 3d=1;
 
 if(3d){
-    front_panel_2d();
+    top_panel_2d();
     //generate_3d();
 }
 else {
