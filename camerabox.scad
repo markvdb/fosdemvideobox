@@ -101,10 +101,11 @@ module spacer_holes_vga_hdmi_2d(){
 
 module spacer_holes_vga_splitter_2d(){
     circle(d=spacer_hole_diameter);
-    translate([43.3,0]) circle(d=spacer_hole_diameter);
-    translate([43.3,43.3]) circle(d=spacer_hole_diameter);
-    translate([0,43.3]) circle(d=spacer_hole_diameter);
+    translate([44,0]) circle(d=spacer_hole_diameter);
+    translate([44,44]) circle(d=spacer_hole_diameter);
+    translate([0,44]) circle(d=spacer_hole_diameter);
 }
+
 module spacer_holes_bpi_2d(){
     circle(d=spacer_hole_diameter);
     translate([85.4,0]) circle(d=spacer_hole_diameter);
@@ -344,8 +345,7 @@ module honeycomb(rows, columns, cell_interior, walls) {
 3d=1;
 
 if(3d){
-    top_panel_2d();
-    //generate_3d();
+    generate_3d();
 }
 else {
     generate_2d();
