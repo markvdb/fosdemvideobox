@@ -86,10 +86,10 @@ module case_bolt_hole_centered(){
 
 module lcd_hole(){
     square([lcd_width,lcd_height]);
-    translate([lcd_width+3.5, lcd_height-4.9]) circle(d=3);//upper right lcd backing panel hole
-    translate([lcd_width+3.5, 15]) circle(d=3);//lower right lcd backing panel hole
-    translate([-3.5, lcd_height-4.9]) circle(d=3);//upper left lcd backing panel hole
-    translate([-3.5, 7.3]) circle(d=3);//lower left lcd backing panel hole
+    translate([lcd_width+3.25, lcd_height-4.9]) circle(d=3);//upper right lcd backing panel hole
+    translate([lcd_width+3.25, 15]) circle(d=3);//lower right lcd backing panel hole
+    translate([-3.25, lcd_height-4.9]) circle(d=3);//upper left lcd backing panel hole
+    translate([-3.25, 7.3]) circle(d=3);//lower left lcd backing panel hole
 }
 
 module spacer_holes_vga_hdmi_2d(){
