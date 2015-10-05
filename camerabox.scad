@@ -27,7 +27,6 @@ side_panel_teeth=5;
 case_teeth_height=acrylic;
 case_teeth_width=side_panel_width/(side_panel_teeth*2-1);
 
-
 // Panels
 
 d_hole_height=27.1;
@@ -56,6 +55,7 @@ psu_cutout_depth=84;
 ssd_depth=69.85;
 ssd_height=9.5;
 ssd_width=100;
+front_panel_tooth_width= (case_width-lcd_width)/8;
 
 
 /* Components 2D
@@ -197,29 +197,55 @@ module frack_panel_2d(){
     }
 }
 
-module front_panel_2d(){
+module front_panel_tooth_2d(panel){
     difference(){
-        frack_panel_2d();
-        translate([d_hole_width+10,(front_panel_height)/2]) d_type_hole();
-        translate([2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([case_width-4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
-        translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
+        union(){
+            square([front_panel_tooth_width,acrylic]);
+            if (panel=="bottom") translate([front_panel_tooth_width/2,2*acrylic]) rotate([180,0,0]) case_bolt_hole_centered();
+        }
+        if (panel=="front") translate([front_panel_tooth_width/2,acrylic/2]) circle(d=3);
+    }
+}
+
+module front_panel_teeth_2d(panel){
+    translate([front_panel_tooth_width,0]) front_panel_tooth_2d(panel);
+    translate([front_panel_tooth_width*3,0]) front_panel_tooth_2d(panel);
+    translate([case_width-2*front_panel_tooth_width,0]) front_panel_tooth_2d(panel);
+    translate([case_width-4*front_panel_tooth_width,0]) front_panel_tooth_2d(panel);
+}
+
+module front_panel_2d(){
+    union(){
+        difference(){
+            frack_panel_2d();
+            translate([d_hole_width+10,(front_panel_height)/2]) d_type_hole();
+            translate([2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([case_width-(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([case_width-2*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([case_width-3*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([case_width-4*(d_hole_width+10),(front_panel_height)/2]) d_type_hole();
+            translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
+        }
+        translate([0,0.01-acrylic]) front_panel_teeth_2d("front");
+        translate([0,front_panel_height]) front_panel_teeth_2d("front");
     }
 }
 
 module front_panel_backing_2d(){
     front_panel_backing_hole_height=32;
     front_panel_backing_hole_width=135;
-    difference(){
-        frack_panel_2d();
-        translate([acrylic+10,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
-        translate([case_width-acrylic-10-front_panel_backing_hole_width,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
-        translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
+    union(){
+        difference(){
+            frack_panel_2d();
+            translate([acrylic+10,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
+            translate([case_width-acrylic-10-front_panel_backing_hole_width,(front_panel_height-front_panel_backing_hole_height)/2]) square([front_panel_backing_hole_width,front_panel_backing_hole_height]);
+            translate([(case_width-lcd_width)/2,(front_panel_height-lcd_height)/2]) lcd_hole();
+        }
+        translate([0,0.01-acrylic]) front_panel_teeth_2d("front");
+        translate([0,front_panel_height]) front_panel_teeth_2d("front");
+
     }
 }
 
@@ -238,10 +264,11 @@ module toptom_panel_2d(){
             rotate([0,0,90]) translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
             rotate([0,0,90]) translate([(i*2+3/2)*case_teeth_width,-case_teeth_height/2])  circle(d=3);
         }
-    translate([bottom_panel_width-acrylic,acrylic]) for( i=[0:side_panel_teeth-1]){
+        translate([bottom_panel_width-acrylic,acrylic]) for( i=[0:side_panel_teeth-1]){
             rotate([0,0,90]) translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
             rotate([0,0,90]) translate([(i*2+3/2)*case_teeth_width,-case_teeth_height/2])  circle(d=3);
         }
+        front_panel_teeth_2d("bottom");
     }
 }
 module bottom_panel_2d(){
@@ -268,8 +295,8 @@ module top_panel_2d(){
         toptom_panel_2d();
         //translate([case_width-2*acrylic-psu_width/2+5,case_depth-acrylic-psu_depth/2]) circle(d=psu_cutout_width);
         translate([case_width-2*acrylic-psu_width+psu_cutout_width/2-8, case_depth-acrylic-psu_depth+psu_cutout_depth/2-7]) honeycomb(honeycomb_psu_rows, honeycomb_psu_columns, honeycomb_cell_interior, honeycomb_walls);
-        translate([acrylic+13,acrylic+10]) honeycomb(honeycomb_rows, honeycomb_columns, honeycomb_cell_interior, honeycomb_walls);
-        import(file="/home/lusis/fosdembox/fosdem_logo_and_gear.dxf");
+        //translate([acrylic+13,acrylic+10]) honeycomb(honeycomb_rows, honeycomb_columns, honeycomb_cell_interior, honeycomb_walls);
+        translate([30   ,100]) scale([1.9,1.9,1.9]) linear_extrude(height=100, center=true) import(file="/home/lusis/laser_designs/fosdemvideobox/fosdem_logo_and_gear.dxf");
     }
 }
 
@@ -295,6 +322,13 @@ module side_panel_2d(){
             translate([i*2*case_teeth_width,-case_teeth_height]) square([case_teeth_width,case_teeth_height]);
             translate([i*2*case_teeth_width,side_panel_height]) square([case_teeth_width,case_teeth_height]);
         }
+    }
+}
+
+module left_side_panel_2d(){
+    translate([0,acrylic]) difference(){
+        side_panel_2d();
+        translate([20,20]) honeycomb(5,5,8,2);
     }
 }
 
@@ -341,14 +375,29 @@ module honeycomb(rows, columns, cell_interior, walls) {
     }
 }
 
+//3 bottom panels, 6 back panels, 1 right side panel
+module parts_plate_1(){
+    bottom_panel_2d();
+    translate([case_width+0.01,0]) bottom_panel_2d();
+    translate([0,case_depth+0.01]) back_panel_2d();
+    translate([0,case_depth+front_panel_height+0.02]) back_panel_2d();
+    translate([0,case_depth+2*front_panel_height+0.03]) back_panel_2d();
+    translate([case_width+0.01,case_depth+0.01]) back_panel_2d();
+    translate([case_width+0.01,case_depth+front_panel_height+0.02]) back_panel_2d();
+    translate([case_width+0.01,case_depth+2*front_panel_height+0.03]) back_panel_2d();
+    translate([2*case_width+case_depth+0.02,0]) rotate([0,0,90]) bottom_panel_2d();
+    translate([2*case_width+0.1,case_width+acrylic+0.01]) side_panel_2d();
+}
 
-3d=1;
+3d=0;
 
 if(3d){
     generate_3d();
 }
 else {
-    generate_2d();
+    translate([0,acrylic]) front_panel_2d();
+    translate([0,acrylic+case_height+0.01]) front_panel_backing_2d();
+    //generate_2d();
 }
 
 // Case parts in 2d for laser cutting
