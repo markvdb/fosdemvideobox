@@ -275,11 +275,11 @@ module bottom_panel_2d(){
     difference(){
         toptom_panel_2d();
         translate([acrylic+8,30]) spacer_holes_vga_hdmi_2d();
-        translate([acrylic+90,140]) spacer_holes_vga_splitter_2d();
+        translate([acrylic+90,155]) spacer_holes_vga_splitter_2d();
         translate([acrylic+217,acrylic+20]) spacer_holes_bpi_2d();
         translate([acrylic+340,acrylic+35]) spacer_holes_switch_2d();
         translate([acrylic+330,acrylic+79]) spacer_holes_ssd_2d();
-        translate([acrylic+235,acrylic+170]) h264_holder_holes_2d();
+        translate([acrylic+235,acrylic+185]) h264_holder_holes_2d();
     }
 }
 
